@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Performance Retainer Calculator — Earn Media</title>
+<meta name="description" content="Live calculator for Earn Media's eCom performance retainer model." />
+<style>
+  :root {
+    --color-background-page: #faf9f5;
+    --color-background-primary: #ffffff;
+    --color-background-secondary: #f5f4ee;
+    --color-background-tertiary: #ebe9e0;
+    --color-background-info: #e6f1fb;
+    --color-background-success: #eaf3de;
+    --color-background-warning: #faeeda;
+    --color-background-danger: #fcebeb;
+    --color-background-accent: #faece7;
+
+    --color-text-primary: #181815;
+    --color-text-secondary: #6b6857;
+    --color-text-tertiary: #95927e;
+    --color-text-info: #0c447c;
+    --color-text-success: #27500a;
+    --color-text-warning: #854f0b;
+    --color-text-danger: #791f1f;
+    --color-text-accent: #993c1d;
+
+    --color-border-tertiary: rgba(24, 24, 21, 0.12);
+    --color-border-secondary: rgba(24, 24, 21, 0.18);
+    --color-border-primary: rgba(24, 24, 21, 0.28);
+    --color-border-info: #378add;
+
+    --border-radius-md: 8px;
+    --border-radius-lg: 12px;
+    --border-radius-xl: 16px;
+
+    --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-background-page);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--color-background-accent); color: var(--color-text-accent); }
+
+  .container {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  .header {
+    margin-bottom: 48px;
+  }
+  .header-mark {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-tertiary);
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: 32px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .header p {
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  .section-label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .input-field label {
+    display: block;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 6px;
+  }
+  .input-field input {
+    width: 100%;
+    height: 36px;
+    padding: 0 12px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--color-text-primary);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .input-field input:hover {
+    border-color: var(--color-border-secondary);
+  }
+  .input-field input:focus {
+    outline: none;
+    border-color: var(--color-border-info);
+    box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+  }
+
+  .status-banner {
+    padding: 12px 14px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 20px;
+    font-size: 13px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .status-banner.good {
+    background: var(--color-background-success);
+    color: var(--color-text-success);
+  }
+  .status-banner.warn {
+    background: var(--color-background-warning);
+    color: var(--color-text-warning);
+  }
+  .status-banner.bad {
+    background: var(--color-background-danger);
+    color: var(--color-text-danger);
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .metric-card {
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 16px;
+  }
+  .metric-card .label {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+  }
+  .metric-card .value {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .summary-card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .summary-row .label {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .summary-row .value {
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .summary-divider {
+    border-top: 0.5px solid var(--color-border-tertiary);
+    padding-top: 12px;
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .summary-divider .label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .summary-divider .value {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .tier-table-wrap {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  table.tier-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .tier-table thead tr {
+    background: var(--color-background-secondary);
+  }
+  .tier-table thead th {
+    text-align: left;
+    padding: 10px 12px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+  }
+  .tier-table thead th:not(:first-child) {
+    text-align: right;
+  }
+  .tier-table tbody tr {
+    border-top: 0.5px solid var(--color-border-tertiary);
+    transition: background 0.15s;
+  }
+  .tier-table tbody tr.active {
+    background: var(--color-background-info);
+  }
+  .tier-table tbody td {
+    padding: 10px 12px;
+  }
+  .tier-table tbody td:not(:first-child) {
+    text-align: right;
+  }
+  .tier-table tbody td.fee-cell {
+    font-weight: 500;
+  }
+  .tier-table tbody td.status-cell {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-tertiary);
+  }
+  .tier-table tbody tr.active td {
+    font-weight: 500;
+  }
+  .status-active {
+    color: var(--color-text-success);
+  }
+  .status-locked {
+    color: var(--color-text-warning);
+  }
+
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: var(--color-text-primary);
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 32px 16px 64px; }
+    .header h1 { font-size: 26px; }
+    .summary-divider .value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="header-mark">Earn Media · Performance Retainer</div>
+    <h1>eCom retainer calculator</h1>
+    <p>Adjust the inputs to model your monthly fee. The base retainer is the floor; per-order fees unlock once revenue exceeds the threshold and ROAS is profitable.</p>
+  </header>
+
+  <div class="section-label">Inputs</div>
+  <div class="inputs-grid">
+    <div class="input-field">
+      <label for="aov">Avg order value (AUD)</label>
+      <input type="number" id="aov" value="100" min="1" step="1" />
+    </div>
+    <div class="input-field">
+      <label for="orders">Number of orders</label>
+      <input type="number" id="orders" value="2000" min="0" step="1" />
+    </div>
+    <div class="input-field">
+      <label for="roas">Blended ROAS</label>
+      <input type="number" id="roas" value="5.0" min="0" step="0.1" />
+    </div>
+    <div class="input-field">
+      <label for="retainer">Base retainer (AUD)</label>
+      <input type="number" id="retainer" value="5000" min="0" step="100" />
+    </div>
+    <div class="input-field">
+      <label for="threshold">Revenue threshold (AUD)</label>
+      <input type="number" id="threshold" value="120000" min="0" step="1000" />
+    </div>
+    <div class="input-field">
+      <label for="baseline">Baseline CPA (AUD)</label>
+      <input type="number" id="baseline" value="40" min="0" step="1" />
+    </div>
+  </div>
+
+  <div id="status-banner" class="status-banner"></div>
+
+  <div class="metric-grid">
+    <div class="metric-card">
+      <div class="label">Monthly revenue</div>
+      <div class="value" id="out-revenue">$0</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Implied ad CPA</div>
+      <div class="value" id="out-cpa">$0</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Saving per order</div>
+      <div class="value" id="out-saving">$0</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Per-order rate</div>
+      <div class="value" id="out-rate">$0</div>
+    </div>
+  </div>
+
+  <div class="summary-card">
+    <div class="summary-row">
+      <span class="label">Base retainer</span>
+      <span class="value" id="out-base">$5,000</span>
+    </div>
+    <div class="summary-row">
+      <span class="label">Per-order fees (<span id="out-billable">0</span> billable × <span id="out-rate-2">$0</span>)</span>
+      <span class="value" id="out-perorder">$0</span>
+    </div>
+    <div class="summary-row" style="margin-top: 4px; padding-top: 8px; border-top: 0.5px solid var(--color-border-tertiary);">
+      <span class="label" style="font-size: 12px; color: var(--color-text-tertiary);">Client saving captured (vs baseline CPA)</span>
+      <span style="font-size: 12px; color: var(--color-text-tertiary);" id="out-share">—</span>
+    </div>
+    <div class="summary-divider">
+      <span class="label">Total monthly fee</span>
+      <span class="value" id="out-total">$5,000</span>
+    </div>
+  </div>
+
+  <div class="section-label">ROAS tier schedule (per-order fee on billable orders)</div>
+  <div class="tier-table-wrap">
+    <table class="tier-table">
+      <thead>
+        <tr>
+          <th>ROAS band</th>
+          <th>Per-order fee</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tier-tbody"></tbody>
+    </table>
+  </div>
+
+  <footer class="footer">
+    <span>Earn Media · Brisbane, Australia</span>
+    <a href="mailto:jackson@earnmedia.com.au">jackson@earnmedia.com.au</a>
+  </footer>
+
+</div>
+
+<script>
+  const tiers = [
+    { min: 0,    max: 2.5,    fee: 0,  label: 'Under 2.5x' },
+    { min: 2.5,  max: 3.0,    fee: 3,  label: '2.5x – 3.0x' },
+    { min: 3.0,  max: 3.5,    fee: 4,  label: '3.0x – 3.5x' },
+    { min: 3.5,  max: 4.0,    fee: 5,  label: '3.5x – 4.0x' },
+    { min: 4.0,  max: 4.5,    fee: 9,  label: '4.0x – 4.5x' },
+    { min: 4.5,  max: 5.0,    fee: 11, label: '4.5x – 5.0x' },
+    { min: 5.0,  max: 5.5,    fee: 13, label: '5.0x – 5.5x' },
+    { min: 5.5,  max: 6.0,    fee: 15, label: '5.5x – 6.0x' },
+    { min: 6.0,  max: 7.0,    fee: 18, label: '6.0x – 7.0x' },
+    { min: 7.0,  max: 8.0,    fee: 22, label: '7.0x – 8.0x' },
+    { min: 8.0,  max: 9.0,    fee: 25, label: '8.0x – 9.0x' },
+    { min: 9.0,  max: 10.0,   fee: 28, label: '9.0x – 10.0x' },
+    { min: 10.0, max: Infinity, fee: 32, label: '10.0x+' }
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  function getTier(roas) {
+    return tiers.find(t => roas >= t.min && roas < t.max) || tiers[tiers.length - 1];
+  }
+
+  function fmt(n) {
+    return '$' + Math.round(n).toLocaleString('en-AU');
+  }
+
+  function render() {
+    const aov = Math.max(0, parseFloat($('aov').value) || 0);
+    const orders = Math.max(0, parseInt($('orders').value) || 0);
+    const roas = Math.max(0, parseFloat($('roas').value) || 0);
+    const retainer = Math.max(0, parseFloat($('retainer').value) || 0);
+    const threshold = Math.max(0, parseFloat($('threshold').value) || 0);
+    const baselineCpa = Math.max(0, parseFloat($('baseline').value) || 0);
+
+    const revenue = aov * orders;
+    const thresholdOrders = aov > 0 ? Math.ceil(threshold / aov) : 0;
+    const billable = Math.max(0, orders - thresholdOrders);
+    const tier = getTier(roas);
+    const revenueOk = revenue >= threshold;
+    const roasOk = roas >= 2.5;
+    const perOrderActive = revenueOk && roasOk;
+    const perOrderTotal = perOrderActive ? billable * tier.fee : 0;
+    const total = retainer + perOrderTotal;
+
+    const cpa = roas > 0 ? aov / roas : 0;
+    const saving = Math.max(0, baselineCpa - cpa);
+    const sharePct = saving > 0 ? Math.round((tier.fee / saving) * 100) : 0;
+
+    const banner = $('status-banner');
+    banner.classList.remove('good', 'warn', 'bad');
+    if (!revenueOk) {
+      banner.classList.add('warn');
+      const need = thresholdOrders - orders;
+      banner.textContent = 'Below revenue threshold — base retainer only. Need ' + fmt(threshold - revenue) + ' more revenue (' + need.toLocaleString() + ' more orders) to unlock per-order fees.';
+    } else if (!roasOk) {
+      banner.classList.add('bad');
+      banner.textContent = 'ROAS below 2.5x — per-order fees suspended. Client unprofitable at this efficiency.';
+    } else {
+      banner.classList.add('good');
+      banner.textContent = 'Per-order model active — earning ' + fmt(tier.fee) + ' on each of ' + billable.toLocaleString() + ' billable orders.';
+    }
+
+    $('out-revenue').textContent = fmt(revenue);
+    $('out-cpa').textContent = fmt(cpa);
+    $('out-saving').textContent = fmt(saving);
+    $('out-rate').textContent = perOrderActive ? fmt(tier.fee) : '$0';
+
+    $('out-base').textContent = fmt(retainer);
+    $('out-perorder').textContent = fmt(perOrderTotal);
+    $('out-total').textContent = fmt(total);
+    $('out-billable').textContent = perOrderActive ? billable.toLocaleString() : '0';
+    $('out-rate-2').textContent = perOrderActive ? fmt(tier.fee) : '$0';
+    $('out-share').textContent = (saving > 0 && perOrderActive)
+      ? (fmt(tier.fee) + ' of ' + fmt(saving) + ' saved (' + sharePct + '%)')
+      : '—';
+
+    const tbody = $('tier-tbody');
+    tbody.innerHTML = '';
+    tiers.forEach(t => {
+      const isCurrent = roas >= t.min && roas < t.max;
+      const tr = document.createElement('tr');
+      if (isCurrent) tr.classList.add('active');
+
+      let statusText = '';
+      let statusClass = '';
+      if (isCurrent) {
+        if (perOrderActive) {
+          statusText = 'Active';
+          statusClass = 'status-active';
+        } else {
+          statusText = 'Locked';
+          statusClass = 'status-locked';
+        }
+      }
+
+      tr.innerHTML =
+        '<td>' + t.label + '</td>' +
+        '<td class="fee-cell">' + (t.fee === 0 ? '$0' : '$' + t.fee + '/order') + '</td>' +
+        '<td class="status-cell ' + statusClass + '">' + statusText + '</td>';
+      tbody.appendChild(tr);
+    });
+  }
+
+  ['aov', 'orders', 'roas', 'retainer', 'threshold', 'baseline'].forEach(id => {
+    $(id).addEventListener('input', render);
+  });
+  render();
+</script>
+
+</body>
+</html>
